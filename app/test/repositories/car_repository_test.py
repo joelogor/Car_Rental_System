@@ -4,11 +4,11 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
-from app.schemas.models.car import Car
-from app.schemas.models.enums.car_brand import CarBrand
-from app.schemas.models.enums.car_model import CarModel
-from app.schemas.models.enums.car_state import CarState
-from app.schemas.models.enums.release_year import ReleaseYear
+from app.models import Car
+from app.models.enums.car_brand import CarBrand
+from app.models import CarModel
+from app.models.enums.car_state import CarState
+from app.models.enums.release_year import ReleaseYear
 from app.repositories.car_repository import CarRepository
 
 class TestCarRepository:

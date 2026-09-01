@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.schemas.models import RegisterUserRequest, RegisterUserResponse, LoginUserRequest, LoginUserResponse
+from app.models import RegisterUserRequest, RegisterUserResponse, LoginUserRequest, LoginUserResponse
 
 
 class AuthServices(ABC):
@@ -15,3 +15,6 @@ class AuthServices(ABC):
     @abstractmethod
     def logout_user(self):
         pass
+
+    def get_by_id(self, car: Car) :
+        

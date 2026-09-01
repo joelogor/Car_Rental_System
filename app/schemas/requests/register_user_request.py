@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from app.schemas.models.enums.role import Role
+from app.models.enums.role import Role
 
 class RegisterUserRequest(BaseModel):
     username : str = Field(...,min_length=1,max_length=20)

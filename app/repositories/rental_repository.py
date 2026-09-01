@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlmodel import Session, select
 
-from app.schemas.models.rental import Rental
+from app.models import Rental
 
 class RentalRepository:
     def __init__(self, session: Session):

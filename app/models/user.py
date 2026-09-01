@@ -4,7 +4,7 @@ from uuid import UUID
 
 from sqlmodel import SQLModel ,Field
 
-from app.schemas.models.enums.role import Role
+from app.models.enums.role import Role
 
 class User(ABC,SQLModel,table=True):
     id: UUID = Field(default_factory=uuid.uuid4,primary_key=True)

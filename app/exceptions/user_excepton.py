@@ -1,8 +1,11 @@
 class UsernameAlreadyExistsException(Exception):
-    pass
+    def __init__(self, message="Username already exists"):
+        self.message = message
 
 class EmailAlreadyExistsException(Exception):
-    pass
+    def __init__(self, message="Email already exists"):
+        self.message = message
 
 class InvalidCredentialsException(Exception):
-    pass
+    def __init__(self, message="Invalid credentials"):
+        self.message = message

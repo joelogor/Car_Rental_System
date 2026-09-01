@@ -14,8 +14,8 @@ class AuthServices:
         self._user_repository = repository
 
     def register(self, request_data: RegisterUserRequest) -> RegisterUserResponse:
-        existing_username = self._user_repository.find_by_username(request_data.username)
-        existing_email = self._user_repository.find_by_email(request_data.email)
+        existing_username = self._user_repository.find_by_username(request_data.username.lower())
+        existing_email = self._user_repository.find_by_email(request_data.email.lower())
 
         if existing_username:
             raise UsernameAlreadyExistsException()
@@ -25,9 +25,9 @@ class AuthServices:
 
 
         user = User(
-            username=request_data.username,
+            username=request_data.username.lower(),
             full_name=request_data.full_name,
-            email=request_data.email,
+            email=request_data.email.lower(),
             password=request_data.password,
             role=request_data.role
         )
@@ -46,7 +46,7 @@ class AuthServices:
 
 
     def login(self,login_user_request: LoginUserRequest ) -> LoginUserResponse:
-        existing_user = self._user_repository.find_by_username(login_user_request.username)
+        existing_user = self._user_repository.find_by_username(login_user_request.username.lower())
 
         if not existing_user:
             raise InvalidCredentialsException()
@@ -64,7 +64,7 @@ class AuthServices:
         return login_user_response
 
     def logout(self,logout_request: LogoutUserRequest) -> LogoutUserResponse:
-        existing_user = self._user_repository.find_by_username(logout_request.username)
+        existing_user = self._user_repository.find_by_username(logout_request.username.lower())
 
         if not existing_user:
             raise InvalidCredentialsException()

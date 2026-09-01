@@ -1,5 +1,8 @@
 from sqlalchemy import StaticPool
 from sqlmodel import SQLModel, create_engine, Session
+from app.models.user import User
+from app.models.car import Car
+from app.models.rental import Rental
 
 DATABASE_URL : str = 'sqlite:///database.db'
 

@@ -92,10 +92,7 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="98b24f65-76f1-4243-920e-82a0ccbf4798" object-ref="consoles/production_connection" />
-      <object connection-id="98b24f65-76f1-4243-920e-82a0ccbf4798" object-ref="schemas/car_rental_system_db/tables/user" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabasePrerequisiteManager">
     <prerequisites />
@@ -109,6 +106,8 @@
     <filter-actions connection-id="a1f69c95-cfd4-46c9-b3f1-b9b3558004ae" dataset="test.rental" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="a1f69c95-cfd4-46c9-b3f1-b9b3558004ae" dataset="test.car" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="98b24f65-76f1-4243-920e-82a0ccbf4798" dataset="car_rental_system_db.user" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="98b24f65-76f1-4243-920e-82a0ccbf4798" dataset="car_rental_system_db.rental" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="98b24f65-76f1-4243-920e-82a0ccbf4798" dataset="car_rental_system_db.car" active-filter-id="EMPTY_FILTER" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />

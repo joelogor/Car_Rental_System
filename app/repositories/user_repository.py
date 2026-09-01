@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlmodel import Session, select
 
-from app.models import User
+from app.models.user import User
 
 
 class UserRepository:
@@ -30,21 +30,6 @@ class UserRepository:
             self._session.commit()
             return True
         return False
-
-    # def update_by_id(self,user_id: UUID,request_dto: UpdateUserRequest):
-    #     user = self.find_by_id(user_id)
-    #     if user is None:
-    #         return None
-
-        update_data = request_dto.model_dump(exclude_unset=True)
-
-        for key, value in update_data.items():
-            setattr(user, key, value)
-        self._session.add(user)
-        self._session.commit()
-        self._session.refresh(user)
-
-        return user
 
     def count (self) -> int:
         users = self.find_all()

@@ -3,13 +3,14 @@ from pydantic import ValidationError
 from sqlmodel import Session
 
 from app.exceptions.user_excepton import UsernameAlreadyExistsException, EmailAlreadyExistsException, \
-    InvalidCredentialsException
+    InvalidCredentialsException, UnauthorizedException
 from app.repositories.user_repository import UserRepository
-from app.models import Role
+from app.models.enums.role import Role
 from app.schemas.requests.login_request import LoginUserRequest
 from app.schemas.requests.logout_request import LogoutUserRequest
 from app.schemas.requests.register_request import RegisterUserRequest
-from app.services.auth_services import AuthServices
+from app.schemas.requests.update_profile_request import UpdateProfileRequest
+from app.services.auth_services import AuthService
 
 class TestAuthServices:
 
@@ -19,13 +20,13 @@ class TestAuthServices:
 
     @pytest.fixture
     def auth_service(self, user_repository : UserRepository):
-        return AuthServices(user_repository)
+        return AuthService(user_repository)
 
-    def test_create_auth_service(self, user_repository : UserRepository, auth_service : AuthServices):
+    def test_create_auth_service(self, user_repository : UserRepository, auth_service : AuthService):
 
         assert auth_service is not None
 
-    def test_register_user(self, user_repository : UserRepository, auth_service : AuthServices):
+    def test_register_user(self, user_repository : UserRepository, auth_service : AuthService):
 
         user_request = RegisterUserRequest(
             full_name="onwere grace",
@@ -42,7 +43,7 @@ class TestAuthServices:
         assert register_response.username == user_request.username
 
 
-    def test_register_user_with_missing_fields(self,user_repository : UserRepository, auth_service : AuthServices):
+    def test_register_user_with_missing_fields(self, user_repository : UserRepository, auth_service : AuthService):
         with pytest.raises(ValidationError):
             RegisterUserRequest(
                 username="gracey",
@@ -51,7 +52,7 @@ class TestAuthServices:
                 role=Role.FRONT_DESK,
             )
 
-    def test_register_two_users_with_same_username_throws_exception(self, user_repository : UserRepository, auth_service : AuthServices):
+    def test_register_two_users_with_same_username_throws_exception(self, user_repository : UserRepository, auth_service : AuthService):
         user_request = RegisterUserRequest(
             full_name="onwere grace",
             username="gracey",
@@ -73,7 +74,7 @@ class TestAuthServices:
         with pytest.raises(UsernameAlreadyExistsException):
             auth_service.register(user_two_request)
 
-    def test_register_user_with_duplicate_email(self, user_repository : UserRepository, auth_service : AuthServices):
+    def test_register_user_with_duplicate_email(self, user_repository : UserRepository, auth_service : AuthService):
         user_request = RegisterUserRequest(
             full_name="onwere grace",
             username="gracey",
@@ -95,7 +96,7 @@ class TestAuthServices:
         with pytest.raises(EmailAlreadyExistsException):
             auth_service.register(user_two_request)
 
-    def test_register_two_users(self, user_repository: UserRepository, auth_service: AuthServices):
+    def test_register_two_users(self, user_repository: UserRepository, auth_service: AuthService):
         user_request = RegisterUserRequest(
             full_name="Oluyemi Isire",
             username="Zoe",
@@ -118,7 +119,7 @@ class TestAuthServices:
 
         assert user_repository.count() == 2
 
-    def test_login_user(self,user_repository : UserRepository, auth_service : AuthServices):
+    def test_login_user(self, user_repository : UserRepository, auth_service : AuthService):
         user_request = RegisterUserRequest(
             full_name="onwere grace",
             username="gracey",
@@ -138,7 +139,7 @@ class TestAuthServices:
 
         assert login_response.logged_in is True
 
-    def test_login_fake_user(self,user_repository : UserRepository, auth_service : AuthServices):
+    def test_login_fake_user(self, user_repository : UserRepository, auth_service : AuthService):
 
         login_request = LoginUserRequest(
             username='fakegrace',
@@ -148,7 +149,7 @@ class TestAuthServices:
         with pytest.raises(InvalidCredentialsException):
             auth_service.login(login_request)
 
-    def test_login_user_with_password_mismatch(self,user_repository : UserRepository, auth_service : AuthServices):
+    def test_login_user_with_password_mismatch(self, user_repository : UserRepository, auth_service : AuthService):
         user_request = RegisterUserRequest(
             full_name="onwere grace",
             username="gracey",
@@ -167,7 +168,7 @@ class TestAuthServices:
         with pytest.raises(InvalidCredentialsException):
             auth_service.login(login_request)
 
-    def test_logout_user(self,user_repository : UserRepository, auth_service : AuthServices):
+    def test_logout_user(self, auth_service : AuthService):
         user_request = RegisterUserRequest(
             full_name="onwere grace",
             username="gracey",
@@ -193,3 +194,64 @@ class TestAuthServices:
         response = auth_service.logout(logout_request)
 
         assert response.message == 'Logged out successfully'
+
+    def test_update_fake_user_throws_exception(self, auth_service : AuthService):
+
+        update_request = UpdateProfileRequest(
+            username='fakegrace212',
+            email='lifeisSoft@gmail.com',
+            password='121245678'
+        )
+
+        with pytest.raises(InvalidCredentialsException):
+            auth_service.update_profile(update_request)
+
+    def test_update_user(self, auth_service : AuthService):
+        user_request = RegisterUserRequest(
+            full_name="onwere grace",
+            username="gracey",
+            email="lifeisTuff@gmail.com",
+            password='12345678',
+            role=Role.FRONT_DESK,
+        )
+
+        auth_service.register(user_request)
+
+        login_request = LoginUserRequest(
+            username='gracey',
+            password='12345678',
+        )
+
+        auth_service.login(login_request)
+
+        update_request = UpdateProfileRequest(
+            username='gracey',
+            email='lifeisSoft@gmail.com',
+            password='121245678'
+        )
+
+        response = auth_service.update_profile(update_request)
+
+        assert response.email == update_request.email
+        assert response.username == update_request.username
+        assert response.password == update_request.password
+
+    def test_update_user_not_logged_in_throws_exception(self, auth_service : AuthService):
+        user_request = RegisterUserRequest(
+            full_name="onwere grace",
+            username="gracey",
+            email="lifeisTuff@gmail.com",
+            password='12345678',
+            role=Role.FRONT_DESK,
+        )
+
+        auth_service.register(user_request)
+
+        update_request = UpdateProfileRequest(
+            username='gracey',
+            email='lifeisSoft@gmail.com',
+            password='121245678'
+        )
+
+        with pytest.raises(UnauthorizedException):
+            auth_service.update_profile(update_request)

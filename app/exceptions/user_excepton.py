@@ -9,3 +9,7 @@ class EmailAlreadyExistsException(Exception):
 class InvalidCredentialsException(Exception):
     def __init__(self, message="Invalid credentials"):
         self.message = message
+
+class UnauthorizedException(Exception):
+    def __init__(self, message="User not logged in"):
+        self.message = message

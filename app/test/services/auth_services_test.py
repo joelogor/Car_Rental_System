@@ -5,7 +5,7 @@ from sqlmodel import Session
 from app.exceptions.user_excepton import UsernameAlreadyExistsException, EmailAlreadyExistsException, \
     InvalidCredentialsException
 from app.repositories.user_repository import UserRepository
-from app.schemas.models.enums.role import Role
+from app.models import Role
 from app.schemas.requests.login_request import LoginUserRequest
 from app.schemas.requests.logout_request import LogoutUserRequest
 from app.schemas.requests.register_request import RegisterUserRequest

@@ -1,7 +1,7 @@
 from app.exceptions.user_excepton import UsernameAlreadyExistsException, EmailAlreadyExistsException, \
     InvalidCredentialsException
 from app.repositories.user_repository import UserRepository
-from app.schemas.models.user import User
+from app.models import User
 from app.schemas.requests.logout_request import LogoutUserRequest
 from app.schemas.requests.register_request import RegisterUserRequest
 from app.schemas.requests.login_request import LoginUserRequest

@@ -4,8 +4,8 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import  Session
 
-from app.schemas.models.enums.role import Role
-from app.schemas.models.user import User
+from app.models import Role
+from app.models import User
 from app.repositories.user_repository import UserRepository
 
 class TestUserRepository:

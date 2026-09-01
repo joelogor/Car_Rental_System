@@ -7,14 +7,14 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import text
 from sqlmodel import Session
 
-from app.schemas.models.car import Car
-from app.schemas.models.enums.car_brand import CarBrand
-from app.schemas.models.enums.car_model import CarModel
-from app.schemas.models.enums.car_state import CarState
-from app.schemas.models.enums.release_year import ReleaseYear
-from app.schemas.models.rental import Rental
-from app.schemas.models.enums.role import Role
-from app.schemas.models.user import User
+from app.models import Car
+from app.models import CarBrand
+from app.models import CarModel
+from app.models.enums.car_state import CarState
+from app.models import ReleaseYear
+from app.models.rental import Rental
+from app.models import Role
+from app.models import User
 from app.repositories.car_repository import CarRepository
 from app.repositories.rental_repository import RentalRepository
 from app.repositories.user_repository import UserRepository

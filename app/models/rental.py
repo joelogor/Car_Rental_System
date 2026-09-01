@@ -1,6 +1,6 @@
 import uuid
 
-from app.schemas.models.enums.role import Role
+from app.models.enums.role import Role
 
 from sqlmodel import SQLModel, Field
 from uuid import UUID

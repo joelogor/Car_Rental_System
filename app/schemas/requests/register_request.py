@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr
-from app.schemas.models.enums.role import Role
+from app.models import Role
 
 class RegisterUserRequest(BaseModel):
     username : str = Field(...,min_length=1,max_length=20)

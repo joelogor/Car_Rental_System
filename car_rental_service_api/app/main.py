@@ -1,6 +1,10 @@
-def main():
-    print("Hello from car-rental-service-api!")
+from fastapi import FastAPI
+
+from app.routers.car_router import router as car_router
+
+app = FastAPI()
+
+app.include_router(car_router)
 
 
-if __name__ == "__main__":
-    main()
+

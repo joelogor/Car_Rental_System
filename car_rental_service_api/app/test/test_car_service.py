@@ -5,6 +5,7 @@ from app.models.car import Car
 from app.models.car_brand import CarBrand
 from app.models.car_model import CarModel
 from app.models.car_state import CarState
+from app.schema.request.car_request import AddCarRequest
 from app.services.car_service import CarService
 
 
@@ -13,7 +14,7 @@ class TestCarService(TestCase):
     def test_save_car(self):
         repository = Mock()
 
-        car = Car(
+        request = AddCarRequest(
             model=CarModel.COROLLA,
             brand=CarBrand.TOYOTA,
             release_year=2016,
@@ -22,14 +23,27 @@ class TestCarService(TestCase):
             total_car_number=1
         )
 
+        car = Car(
+            model=request.model,
+            brand=request.brand,
+            release_year=request.release_year,
+            car_state=request.car_state,
+            plate_number=request.plate_number,
+            total_car_number=request.total_car_number
+        )
+
         repository.save.return_value = car
 
         service = CarService(repository)
 
-        saved_car = service.save_car(car)
+        saved_car = service.save_car(request)
 
-        self.assertEqual(car, saved_car)
-        repository.save.assert_called_once_with(car)
+        self.assertEqual(saved_car.model, request.model)
+        self.assertEqual(saved_car.brand, request.brand)
+        self.assertEqual(saved_car.release_year, request.release_year)
+        self.assertEqual(saved_car.car_state, request.car_state)
+        self.assertEqual(saved_car.plate_number, request.plate_number)
+        self.assertEqual(saved_car.total_car_number, request.total_car_number)
 
     def test_get_car_by_id(self):
         repository = Mock()

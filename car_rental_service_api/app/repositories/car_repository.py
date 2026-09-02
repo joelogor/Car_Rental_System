@@ -42,8 +42,8 @@ class CarRepository:
 
         return existing_car
 
-    def remove(self, car: Car):
-        existing_car = self.get_by_id(car.id)
+    def remove(self, car_id: str):
+        existing_car = self.get_by_id(car_id)
 
         if existing_car is None:
             return None

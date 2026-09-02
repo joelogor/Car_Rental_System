@@ -1,45 +1,30 @@
 import uuid
-from uuid import UUID
 
+
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Enum as SQLEnum, Integer, CHAR, String
+
+from app.database import Base
 from app.models.car_brand import CarBrand
 from app.models.car_model import CarModel
 from app.models.car_state import CarState
-from app.models.release_year import ReleaseYear
 
 
-class Car:
 
-    def __init__(
-            self,
-            model: CarModel,
-            brand: CarBrand,
-            release_year: ReleaseYear,
-            total_car_number: int
-    ):
-        self.__id: UUID = uuid.uuid4()
-        self.__model = model
-        self.__brand = brand
-        self.__release_year = release_year
-        self.__car_state = CarState.AVAILABLE
-        self.__total_car_number = total_car_number
+class Car(Base):
+    __tablename__ = "cars"
 
-    def get_id(self):
-            return self.__id
+    id: Mapped[str] = mapped_column(
+        CHAR(36),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4())
+    )
 
-    def get_car_state(self):
-        return self.__car_state
+    model: Mapped[CarModel] = mapped_column( SQLEnum(CarModel))
+    brand: Mapped[CarBrand] = mapped_column( SQLEnum(CarBrand))
+    release_year: Mapped[int] = mapped_column( Integer)
+    car_state: Mapped[CarState] = mapped_column( SQLEnum(CarState))
+    plate_number: Mapped[str] = mapped_column(String(20), unique=True,
+    nullable=False)
+    total_car_number: Mapped[int] = mapped_column(Integer)
 
-    def set_car_state(self, car_state: CarState):
-        self.__car_state = car_state
-
-    def set_model(self, model):
-        self.__model = model
-
-    def set_brand(self, brand):
-        self.__brand = brand
-
-    def set_release_year(self, release_year):
-        self.__release_year = release_year
-
-    def set_total_car_number(self, total_car_number):
-        self.__total_car_number = total_car_number

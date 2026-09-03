@@ -1,6 +1,5 @@
 from app.exceptions.car_exception import CarNotFoundException, InvalidCarStateException, CarAlreadyExistsException
 from app.exceptions.user_excepton import InvalidCredentialsException, UnauthorizedException
-from app.models import Car
 from app.models.car import Car
 from app.models.enums.car_state import CarState
 from app.models.enums.role import Role

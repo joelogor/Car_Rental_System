@@ -2,8 +2,10 @@ import pytest
 from sqlmodel import Session
 
 from app.exceptions.user_excepton import InvalidCredentialsException, UnauthorizedException
+from app.models import User
 from app.models.enums.car_brand import CarBrand
 from app.models.enums.car_model import CarModel
+from app.models.enums.car_state import CarState
 from app.models.enums.release_year import ReleaseYear
 from app.models.enums.role import Role
 from app.repositories.car_repository import CarRepository
@@ -12,7 +14,7 @@ from app.schemas.requests.add_car_request import AddCarRequest
 from app.schemas.requests.login_request import LoginUserRequest
 from app.schemas.requests.logout_request import LogoutUserRequest
 from app.schemas.requests.register_request import RegisterUserRequest
-from app.schemas.responses.login_reponse import LoginUserResponse
+from app.schemas.requests.update_car_request import UpdateCarRequest
 from app.services.auth_services import AuthService
 from app.services.car_services import CarService
 
@@ -44,9 +46,11 @@ class TestCarServices:
         )
         auth_service.register(user_request)
 
-        response = auth_service.login(login_request)
+        auth_service.login(login_request)
 
-        return response
+        user = user_repository.find_by_username(login_request.username)
+
+        return user
 
     def test_create_car_service(self,setup_dependencies : tuple):
 
@@ -54,7 +58,7 @@ class TestCarServices:
 
         assert car_service is not None
 
-    def test_add_car(self,setup_dependencies : tuple,user : LoginUserResponse):
+    def test_add_car(self,setup_dependencies : tuple,user):
 
         user_repository, car_repository, car_service = setup_dependencies
 
@@ -63,13 +67,15 @@ class TestCarServices:
             model=CarModel.RX350,
             release_year = ReleaseYear.YEAR_2015,
             plate_number = "0101",
-            username = "gracey"
+            username = user.username
         )
         car_service.add_car(car_request)
 
+        user = user_repository.find_by_username(car_request.username)
+
         assert user_repository.count() == 1
         assert car_repository.count() == 1
-        assert user.logged_in is True
+        assert user.is_logged_in is True
 
     def test_add_car_with_fake_user(self,setup_dependencies : tuple):
 
@@ -89,7 +95,7 @@ class TestCarServices:
         assert car_repository.count() == 0
 
 
-    def test_add_car_with_user_not_logged_in(self,setup_dependencies : tuple,user : LoginUserResponse):
+    def test_add_car_with_user_not_logged_in(self,setup_dependencies : tuple,user : User):
 
         user_repository, car_repository, car_service = setup_dependencies
 
@@ -113,11 +119,86 @@ class TestCarServices:
 
             car_service.add_car(car_request)
 
+    def test_update_car_with_fake_user(self,setup_dependencies : tuple):
+        user_repository, car_repository, car_service = setup_dependencies
+        car_request = UpdateCarRequest(
+            plate_number="0101",
+            username="fake_user"
+        )
+
+        with pytest.raises(InvalidCredentialsException):
+            car_service.update_car_state(car_request)
+
+        assert user_repository.count() == 0
+        assert car_repository.count() == 0
 
 
+    def test_update_car_with_user_not_logged_in(self,setup_dependencies : tuple,user : User):
+        user_repository, car_repository, car_service = setup_dependencies
 
+        auth_service = AuthService(user_repository)
 
+        logout_request = LogoutUserRequest(
+            username=user.username
+        )
 
+        auth_service.logout(logout_request)
 
+        car_request = UpdateCarRequest(
+            plate_number="0101",
+            username="gracey"
+        )
 
+        with pytest.raises(UnauthorizedException):
+            car_service.update_car_state(car_request)
 
+    def test_update_car_state_where_car_is_available(self,setup_dependencies : tuple,user : User):
+
+        _,car_repository,car_service = setup_dependencies
+
+        car_request = AddCarRequest(
+            brand=CarBrand.LEXUS,
+            model=CarModel.RX350,
+            release_year=ReleaseYear.YEAR_2016,
+            plate_number="0101",
+            username=user.username
+        )
+
+        car_service.add_car(car_request)
+
+        update_car_request = UpdateCarRequest(
+            username=car_request.username,
+            plate_number=car_request.plate_number
+        )
+
+        response = car_service.update_car_state(update_car_request)
+
+        assert car_repository.count() == 1
+
+        assert response.car_state == CarState.MAINTENANCE
+
+    def test_update_car_where_car_in_maintenance(self,setup_dependencies : tuple,user : User):
+        _, car_repository, car_service = setup_dependencies
+
+        car_request = AddCarRequest(
+            brand=CarBrand.LEXUS,
+            model=CarModel.RX350,
+            release_year=ReleaseYear.YEAR_2016,
+            plate_number="0101",
+            username=user.username
+        )
+
+        car_service.add_car(car_request)
+
+        update_car_request = UpdateCarRequest(
+            username=car_request.username,
+            plate_number=car_request.plate_number
+        )
+
+        car_service.update_car_state(update_car_request)
+
+        response = car_service.update_car_state(update_car_request)
+
+        assert car_repository.count() == 1
+
+        assert response.car_state == CarState.AVAILABLE

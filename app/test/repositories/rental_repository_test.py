@@ -8,12 +8,12 @@ from sqlalchemy.sql.expression import text
 from sqlmodel import Session
 
 from app.models import Car
-from app.models import CarBrand
-from app.models import CarModel
+from app.models.enums.car_brand import CarBrand
+from app.models.enums.car_model import CarModel
 from app.models.enums.car_state import CarState
-from app.models import ReleaseYear
+from app.models .enums.release_year import  ReleaseYear
 from app.models.rental import Rental
-from app.models import Role
+from app.models.enums.role import Role
 from app.models import User
 from app.repositories.car_repository import CarRepository
 from app.repositories.rental_repository import RentalRepository
@@ -64,10 +64,9 @@ class TestRentalRepository:
         rental.customer_address = 'Mushin'
         rental.customer_email = 'okorobobo@yahoo.com'
         rental.sold_by_id = user.id
-        rental.sold_by_name = user.username
-        rental.user_role = user.role
         rental.price = Decimal(10000)
         rental.rental_datetime = datetime.now()
+        rental.expected_return_date = datetime(2026,9,6,16,40)
 
         rental_repository.save(rental)
 
@@ -85,8 +84,8 @@ class TestRentalRepository:
         rental.customer_address = 'Ajah'
         rental.customer_email = 'catchmeifyoucan@gmail.com'
         rental.sold_by_id = user.id
-        rental.sold_by_name = user.username
-        rental.user_role = user.role
+        rental.expected_return_date = datetime(2026,9,6,16,40)
+
         rental.price = Decimal(10000)
 
         with pytest.raises(IntegrityError):
@@ -103,10 +102,9 @@ class TestRentalRepository:
             rental.customer_address = 'Mushin'
             rental.customer_email = 'okorobobo@yahoo.com'
             rental.sold_by_id = user.id
-            rental.sold_by_name = user.username
-            rental.user_role = user.role
             rental.price = Decimal(10000)
             rental.rental_datetime = datetime.now()
+            rental.expected_return_date = datetime(2026, 9, 6, 16, 40)
 
             rental_repository.save(rental)
 
@@ -117,10 +115,9 @@ class TestRentalRepository:
             rental_two.customer_address = 'Mushin'
             rental_two.customer_email = 'okorobobo@yahoo.com'
             rental_two.sold_by_id = user.id
-            rental_two.sold_by_name = user.username
-            rental_two.user_role = user.role
             rental_two.price = Decimal(10000)
             rental_two.rental_datetime = datetime.now()
+            rental_two.expected_return_date = datetime(2026, 9, 6, 16, 40)
 
             rental_repository.save(rental_two)
 

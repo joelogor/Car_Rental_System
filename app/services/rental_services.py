@@ -7,6 +7,7 @@ from app.repositories.car_repository import CarRepository
 from app.repositories.rental_repository import RentalRepository
 from app.repositories.user_repository import UserRepository
 from app.schemas.requests.booking_request import BookingRequest
+from app.schemas.responses.booking_response import BookingResponse
 
 
 class RentalService:
@@ -16,7 +17,7 @@ class RentalService:
         self._rental_repository = rental_repository
 
     def create_booking(self,booking_request : BookingRequest):
-        existing_user = self._user_repository.find_by_username(booking_request.sold_by)
+        existing_user = self._user_repository.find_by_username(booking_request.sold_by.lower())
 
         if not existing_user:
             raise InvalidCredentialsException()
@@ -36,13 +37,34 @@ class RentalService:
             raise InvalidCarStateException()
 
         rental_details = Rental(
-            car_id=car.car_id,
+            car_id=car.id,
             customer_name=booking_request.customer_name,
             customer_phone_number=booking_request.customer_phone_number,
             customer_address=booking_request.customer_address,
             customer_email=booking_request.customer_email,
             sold_by_id=existing_user.id,
-
+            price=booking_request.price,
+            rental_datetime=booking_request.rental_datetime,
+            expected_return_date=booking_request.expected_return_date
         )
 
+        self._rental_repository.save(rental_details)
 
+        car.car_state = CarState.RENTED
+        self._rental_repository.save(car)
+        
+        response = BookingResponse(
+            customer_name=rental_details.customer_name,
+            customer_phone_number=rental_details.customer_phone_number,
+            customer_email=rental_details.customer_email,
+            customer_address=rental_details.customer_address,
+            car_id=car.id,
+            sold_by=booking_request.sold_by,
+            user_role=existing_user.role,
+            price=rental_details.price,
+            rental_datetime=rental_details.rental_datetime,
+            expected_return_date=rental_details.expected_return_date,
+            is_active=rental_details.is_active
+        )
+
+        return response

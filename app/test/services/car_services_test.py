@@ -62,9 +62,10 @@ class TestCarServices:
             brand=CarBrand.LEXUS,
             model=CarModel.RX350,
             release_year = ReleaseYear.YEAR_2015,
-            plate_number = "0101"
+            plate_number = "0101",
+            username = "gracey"
         )
-        car_service.add_car(car_request,user.username)
+        car_service.add_car(car_request)
 
         assert user_repository.count() == 1
         assert car_repository.count() == 1
@@ -73,16 +74,16 @@ class TestCarServices:
     def test_add_car_with_fake_user(self,setup_dependencies : tuple):
 
         user_repository, car_repository, car_service = setup_dependencies
-        fake_user = "fake_user"
         car_request = AddCarRequest(
             brand=CarBrand.LEXUS,
             model=CarModel.RX350,
             release_year=ReleaseYear.YEAR_2015,
-            plate_number="0101"
+            plate_number="0101",
+            username = "fake_user"
         )
 
         with pytest.raises(InvalidCredentialsException):
-            car_service.add_car(car_request,fake_user)
+            car_service.add_car(car_request)
 
         assert user_repository.count() == 0
         assert car_repository.count() == 0
@@ -98,18 +99,19 @@ class TestCarServices:
             username=user.username
         )
 
-        response = auth_service.logout(logout_request)
+        auth_service.logout(logout_request)
 
         car_request = AddCarRequest(
             brand=CarBrand.LEXUS,
             model=CarModel.RX350,
             release_year=ReleaseYear.YEAR_2015,
-            plate_number="0101"
+            plate_number="0101",
+            username="gracey"
         )
 
         with pytest.raises(UnauthorizedException):
 
-            car_service.add_car(car_request,response.username)
+            car_service.add_car(car_request)
 
 
 

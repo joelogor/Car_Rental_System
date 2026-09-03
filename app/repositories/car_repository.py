@@ -3,6 +3,8 @@ from uuid import UUID
 from sqlmodel import Session, select
 from app.models.car import Car
 from app.models.enums.car_brand import CarBrand
+from app.models.enums.car_state import CarState
+
 
 class CarRepository:
     def __init__(self, session: Session):
@@ -37,3 +39,7 @@ class CarRepository:
     def find_by_brand(self,car_brand: CarBrand):
         statement = select(Car).where(Car.brand == car_brand)
         return self._session.exec(statement).all()
+
+    def find_by_plate_number(self,plate_number: str):
+        statement = select(Car).where(Car.plate_number == plate_number)
+        return self._session.exec(statement).one_or_none()

@@ -9,3 +9,4 @@ class AddCarRequest(BaseModel):
     model : CarModel
     release_year : ReleaseYear
     plate_number : str
+    username : str

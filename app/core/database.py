@@ -1,8 +1,5 @@
-from sqlalchemy import StaticPool
 from sqlmodel import SQLModel, create_engine, Session
-from app.models.user import User
-from app.models.car import Car
-from app.models.rental import Rental
+from app.models import __init__
 
 DATABASE_URL : str = 'sqlite:///database.db'
 
@@ -11,8 +8,6 @@ connect_args : dict = {'check_same_thread' : False}
 engine = create_engine(
     DATABASE_URL,connect_args=connect_args,
     echo=True)
-#     poolclass=StaticPool
-# )
 
 def create_db_and_tables() -> None:
     SQLModel.metadata.create_all(engine)

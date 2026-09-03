@@ -2,6 +2,7 @@ from uuid import UUID
 
 from sqlmodel import Session, select
 
+from app.models.enums.rental_status import RentalStatus
 from app.models.rental import Rental
 
 class RentalRepository:
@@ -35,5 +36,5 @@ class RentalRepository:
         return len(rentals)
 
     def find_active(self):
-        statement = select(Rental).where(Rental.is_active==True)
+        statement = select(Rental).where(Rental.is_active == RentalStatus.ACTIVE)
         return self._session.exec(statement).all()

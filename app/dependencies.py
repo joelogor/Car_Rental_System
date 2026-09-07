@@ -3,6 +3,7 @@ from sqlmodel import Session
 
 from app.core.database import get_session
 from app.repositories.car_repository import CarRepository
+from app.repositories.customer_repository import CustomerRepository
 from app.repositories.rental_repository import RentalRepository
 from app.repositories.user_repository import UserRepository
 from app.services.auth_services import AuthService
@@ -13,8 +14,11 @@ from app.services.rental_services import RentalService
 def get_user_repository(session : Session = Depends (get_session)) -> UserRepository:
     return UserRepository(session)
 
-def get_auth_service(user_repository : UserRepository = Depends(get_user_repository)):
-    return AuthService(user_repository)
+def get_customer_repository(session : Session = Depends (get_session)) -> CustomerRepository:
+    return CustomerRepository(session)
+
+def get_auth_service(user_repository : UserRepository = Depends(get_user_repository), customer_repository : CustomerRepository = Depends(get_customer_repository)):
+    return AuthService(user_repository=user_repository, customer_repository=customer_repository)
 
 def get_car_repository(session : Session = Depends (get_session)) -> CarRepository:
     return CarRepository(session)

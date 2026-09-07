@@ -15,6 +15,12 @@ class UserRepository:
         self._session.refresh(user)
         return user
 
+    def save_customer(self,customer: Customer) -> Customer:
+        self._session.add(customer)
+        self._session.commit()
+        self._session.refresh(customer)
+        return customer
+
     def find_by_id(self,user_id: UUID):
         return self._session.get(User,user_id)
 

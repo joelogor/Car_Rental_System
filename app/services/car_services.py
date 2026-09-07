@@ -24,7 +24,7 @@ class CarService:
         if existing_user.is_logged_in is False:
             raise UnauthorizedException()
 
-        if existing_user.role != Role.FLEET_MANAGER:
+        if existing_user.role == Role.FRONT_DESK or existing_user.role == Role.CUSTOMER:
             raise UnauthorizedException("You are not allowed to access this resource")
 
         existing_car = self._car_repository.find_by_plate_number(car_request.plate_number)
@@ -88,3 +88,6 @@ class CarService:
         )
 
         return response
+
+    def get_all_cars(self):
+        return self._car_repository.find_all()

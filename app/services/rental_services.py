@@ -17,7 +17,7 @@ class RentalService:
         self._rental_repository = rental_repository
 
     def create_booking(self,booking_request : BookingRequest):
-        existing_user = self._user_repository.find_by_username(booking_request.sold_by.lower())
+        existing_user = self._user_repository.find_by_username(booking_request.username.lower())
 
         if not existing_user:
             raise InvalidCredentialsException()
@@ -25,7 +25,7 @@ class RentalService:
         if existing_user.is_logged_in is False:
             raise UnauthorizedException()
 
-        if existing_user.role == Role.FLEET_MANAGER:
+        if existing_user.role != Role.CUSTOMER:
             raise UnauthorizedException("You are not authorized to make a booking")
 
         car = self._car_repository.find_by_plate_number(booking_request.car_plate_number)
@@ -38,11 +38,10 @@ class RentalService:
 
         rental_details = Rental(
             car_id=car.id,
-            customer_name=booking_request.customer_name,
+            customer_name=existing_user.full_name,
             customer_phone_number=booking_request.customer_phone_number,
             customer_address=booking_request.customer_address,
             customer_email=booking_request.customer_email,
-            sold_by_id=existing_user.id,
             price=booking_request.price,
             rental_datetime=booking_request.rental_datetime,
             expected_return_date=booking_request.expected_return_date
@@ -59,7 +58,6 @@ class RentalService:
             customer_email=rental_details.customer_email,
             customer_address=rental_details.customer_address,
             car_id=car.id,
-            sold_by=booking_request.sold_by,
             user_role=existing_user.role,
             price=rental_details.price,
             rental_datetime=rental_details.rental_datetime,

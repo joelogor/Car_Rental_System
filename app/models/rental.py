@@ -14,7 +14,6 @@ class Rental(SQLModel,table=True):
     customer_phone_number : str
     customer_address : str
     customer_email : str
-    sold_by_id: UUID = Field(foreign_key='user.id',index=True)
     price : Decimal
     rental_datetime : datetime = Field(default_factory=datetime.now)
     expected_return_date : datetime

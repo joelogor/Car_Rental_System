@@ -1,6 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.sql.coercions import expect
-
 from app.dependencies import get_car_service
 from app.exceptions.car_exception import CarNotFoundException, InvalidCarStateException, CarAlreadyExistsException
 from app.exceptions.user_excepton import UnauthorizedException, InvalidCredentialsException
@@ -48,3 +46,7 @@ def update_car(
 
     except InvalidCarStateException as error:
         raise HTTPException(status_code=400, detail=str(error.message))
+
+@car_router.get("/car")
+def get_all_cars(service: CarService = Depends(get_car_service)):
+    return service.get_all_cars()

@@ -13,7 +13,6 @@ class BookingResponse(BaseModel):
     customer_email: EmailStr
     customer_address: str
     car_id : UUID
-    sold_by: str
     user_role : Role
     price: Decimal
     rental_datetime: datetime = Field(default_factory=datetime.now)

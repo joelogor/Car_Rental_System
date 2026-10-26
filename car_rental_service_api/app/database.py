@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 
-DATABASE_URL = "mysql+pymysql://root:Ekpery+10@localhost/car_rental_service"
+DATABASE_URL = "mysql+pymysql://root:Ekper0@localhost/car_rental_service"
 
 class Base(DeclarativeBase):
     pass
